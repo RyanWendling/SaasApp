@@ -1,4 +1,8 @@
 class ProfilesController < ApplicationController
+  
+    before_action :authenticate_user!
+    before_action :only_current_user
+  
     #When the user makes a GET request to /users/:user_id/profile/new, we want to run the 'new' action
     def new
         #user will want to see a blank profile details screen.
@@ -44,5 +48,10 @@ class ProfilesController < ApplicationController
     private
       def profile_params
         params.require(:profile).permit(:first_name, :last_name, :avatar, :job_title, :phone_number, :contact_email, :description)
+      end
+      
+      def only_current_user
+        @user = User.find( params[:user_id] )
+        redirect_to(root_url) unless @user == current_user
       end
 end
